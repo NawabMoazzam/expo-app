@@ -9,10 +9,8 @@ export default function Index() {
       <Text className="text-foreground text-lg font-bold">
         Welcome to Uniwind!
       </Text>
-      <Text className="text-foreground-secondary mt-2">
-        Current theme: {theme}
-      </Text>
-      <Text className="text-foreground-secondary mt-2">
+      <Text className="text-muted-foreground mt-2">Current theme: {theme}</Text>
+      <Text className="text-muted-foreground mt-2">
         Adaptive themes: {hasAdaptiveThemes ? "enabled" : "disabled"}
       </Text>
       <ThemeSwitcher />

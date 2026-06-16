@@ -1,48 +1,70 @@
-import { View, Pressable, Text } from 'react-native'
-import { Uniwind, useUniwind } from 'uniwind'
+import {
+  Text as ComposeText,
+  DropdownMenu,
+  DropdownMenuItem,
+  Host,
+  RNHostView,
+} from "@expo/ui/jetpack-compose";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useState } from "react";
+import { Pressable } from "react-native";
+import { Uniwind, useUniwind } from "uniwind";
 
 export const ThemeSwitcher = () => {
-  const { theme, hasAdaptiveThemes } = useUniwind()
+  const { theme, hasAdaptiveThemes } = useUniwind();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [foregroundColor, setForegroundColor] = useState(
+    Uniwind.getCSSVariable("--color-foreground") as string,
+  );
+  const activeTheme = hasAdaptiveThemes ? "system" : theme;
 
-  const themes = [
-    { name: 'light', label: 'Light', icon: '☀️' },
-    { name: 'dark', label: 'Dark', icon: '🌙' },
-    { name: 'system', label: 'System', icon: '⚙️' },
-  ]
-  const activeTheme = hasAdaptiveThemes ? 'system' : theme
+  const themes = [{ name: "light" }, { name: "dark" }, { name: "system" }];
+
+  const changeTheme = (themeName: string) => {
+    setIsExpanded(false);
+    Uniwind.setTheme(themeName as "light" | "dark" | "system");
+    setForegroundColor(Uniwind.getCSSVariable("--color-foreground") as string);
+  };
 
   return (
-    <View className="p-4 gap-4">
-      <Text className="text-sm text-gray-600 dark:text-gray-300">
-        Current: {activeTheme}
-      </Text>
-
-      <View className="flex-row gap-2">
-        {themes.map((t) => (
-          <Pressable
-            key={t.name}
-            onPress={() => Uniwind.setTheme(t.name as 'light' | 'dark' | 'system')}
-            className={`
-              px-4 py-3 rounded-lg items-center
-              ${activeTheme === t.name
-                ? 'bg-blue-500'
-                : 'bg-gray-200 dark:bg-gray-700'
-              }
-            `}
-          >
-            <Text className="text-2xl mb-1">{t.icon}</Text>
-            <Text
-              className={`text-xs ${
-                activeTheme === t.name
-                  ? 'text-white'
-                  : 'text-gray-900 dark:text-white'
-              }`}
+    <Host matchContents>
+      <DropdownMenu
+        expanded={isExpanded}
+        onDismissRequest={() => setIsExpanded(false)}
+      >
+        <DropdownMenu.Trigger>
+          <RNHostView matchContents>
+            <Pressable
+              onPress={() => setIsExpanded(true)}
+              className="bg-card border border-border p-2 rounded-lg flex-row items-center justify-center"
             >
-              {t.label}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-    </View>
-  )
-}
+              <Ionicons
+                name={
+                  activeTheme === "light"
+                    ? "sunny"
+                    : activeTheme === "dark"
+                      ? "moon"
+                      : "desktop"
+                }
+                size={20}
+                color={foregroundColor}
+              />
+            </Pressable>
+          </RNHostView>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Items>
+          {themes.map((theme) => (
+            <DropdownMenuItem
+              key={theme.name}
+              onClick={() => changeTheme(theme.name)}
+            >
+              <DropdownMenuItem.Text>
+                <ComposeText>{theme.name}</ComposeText>
+              </DropdownMenuItem.Text>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenu.Items>
+      </DropdownMenu>
+    </Host>
+  );
+};
