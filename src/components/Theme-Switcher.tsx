@@ -1,3 +1,4 @@
+import { CSSVariables } from "@/utils/color";
 import {
   Text as ComposeText,
   DropdownMenu,
@@ -13,21 +14,18 @@ import { Uniwind, useUniwind } from "uniwind";
 export const ThemeSwitcher = () => {
   const { theme, hasAdaptiveThemes } = useUniwind();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [foregroundColor, setForegroundColor] = useState(
-    Uniwind.getCSSVariable("--color-foreground") as string,
-  );
-  const activeTheme = hasAdaptiveThemes ? "system" : theme;
 
+  const color = CSSVariables();
+  const activeTheme = hasAdaptiveThemes ? "system" : theme;
   const themes = [{ name: "light" }, { name: "dark" }, { name: "system" }];
 
   const changeTheme = (themeName: string) => {
     setIsExpanded(false);
     Uniwind.setTheme(themeName as "light" | "dark" | "system");
-    setForegroundColor(Uniwind.getCSSVariable("--color-foreground") as string);
   };
 
   return (
-    <Host matchContents>
+    <Host matchContents colorScheme={theme}>
       <DropdownMenu
         expanded={isExpanded}
         onDismissRequest={() => setIsExpanded(false)}
@@ -36,7 +34,7 @@ export const ThemeSwitcher = () => {
           <RNHostView matchContents>
             <Pressable
               onPress={() => setIsExpanded(true)}
-              className="bg-card border border-border p-2 rounded-lg flex-row items-center justify-center"
+              className="h-8 w-8 border border-border rounded-lg flex items-center justify-center"
             >
               <Ionicons
                 name={
@@ -44,10 +42,10 @@ export const ThemeSwitcher = () => {
                     ? "sunny"
                     : activeTheme === "dark"
                       ? "moon"
-                      : "desktop"
+                      : "desktop-outline"
                 }
                 size={20}
-                color={foregroundColor}
+                color={color.foreground}
               />
             </Pressable>
           </RNHostView>
