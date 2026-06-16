@@ -1,20 +1,24 @@
 import { ThemeSwitcher } from "@/components/Theme-Switcher";
 import "@/global.css";
-import { CSSVariables } from "@/utils/color";
 import { Stack } from "expo-router";
+import { useCSSVariable, useUniwind } from "uniwind";
 
 export default function RootLayout() {
-  const color = CSSVariables();
+  const { theme } = useUniwind();
+  const [background, foreground] = useCSSVariable([
+    "--color-background",
+    "--color-foreground",
+  ]) as Array<string>;
 
   return (
     <Stack
       screenOptions={{
-        statusBarStyle: color.theme === "dark" ? "light" : "dark",
+        statusBarStyle: theme === "dark" ? "light" : "dark",
         title: "Nawab Notes",
-        headerTintColor: color.foreground,
-        headerStyle: { backgroundColor: color.background },
+        headerTintColor: foreground,
+        headerStyle: { backgroundColor: background },
         headerRight: () => <ThemeSwitcher />,
-        contentStyle: { backgroundColor: color.background },
+        contentStyle: { backgroundColor: background },
       }}
     />
   );

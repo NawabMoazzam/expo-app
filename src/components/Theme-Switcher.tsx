@@ -1,4 +1,3 @@
-import { CSSVariables } from "@/utils/color";
 import {
   Text as ComposeText,
   DropdownMenu,
@@ -9,15 +8,15 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import { Pressable } from "react-native";
-import { Uniwind, useUniwind } from "uniwind";
+import { Uniwind, useCSSVariable, useUniwind } from "uniwind";
 
 export const ThemeSwitcher = () => {
   const { theme, hasAdaptiveThemes } = useUniwind();
   const [isExpanded, setIsExpanded] = useState(false);
+  const foregroundColor = useCSSVariable("--color-foreground") as string;
 
-  const color = CSSVariables();
   const activeTheme = hasAdaptiveThemes ? "system" : theme;
-  const themes = [{ name: "light" }, { name: "dark" }, { name: "system" }];
+  const themes = ["light", "dark", "system"];
 
   const changeTheme = (themeName: string) => {
     setIsExpanded(false);
@@ -34,7 +33,7 @@ export const ThemeSwitcher = () => {
           <RNHostView matchContents>
             <Pressable
               onPress={() => setIsExpanded(true)}
-              className="h-8 w-8 border border-border rounded-lg flex items-center justify-center"
+              className="h-8 w-8 flex items-center justify-center"
             >
               <Ionicons
                 name={
@@ -45,19 +44,31 @@ export const ThemeSwitcher = () => {
                       : "desktop-outline"
                 }
                 size={20}
-                color={color.foreground}
+                color={foregroundColor}
               />
             </Pressable>
           </RNHostView>
         </DropdownMenu.Trigger>
         <DropdownMenu.Items>
           {themes.map((theme) => (
-            <DropdownMenuItem
-              key={theme.name}
-              onClick={() => changeTheme(theme.name)}
-            >
+            <DropdownMenuItem key={theme} onClick={() => changeTheme(theme)}>
+              <DropdownMenuItem.LeadingIcon>
+                <Ionicons
+                  name={
+                    theme === "light"
+                      ? "sunny"
+                      : theme === "dark"
+                        ? "moon"
+                        : "desktop-outline"
+                  }
+                  size={20}
+                  color={foregroundColor}
+                />
+              </DropdownMenuItem.LeadingIcon>
               <DropdownMenuItem.Text>
-                <ComposeText>{theme.name}</ComposeText>
+                <ComposeText>
+                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                </ComposeText>
               </DropdownMenuItem.Text>
             </DropdownMenuItem>
           ))}
