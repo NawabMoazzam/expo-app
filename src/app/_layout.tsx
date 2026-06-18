@@ -7,7 +7,7 @@ export default function RootLayout() {
   const { theme } = useUniwind();
   const [background, foreground] = useCSSVariable([
     "--color-background",
-    "--color-foreground",
+    "--color-primary",
   ]) as Array<string>;
 
   return (
@@ -18,7 +18,11 @@ export default function RootLayout() {
         headerTintColor: foreground,
         headerStyle: { backgroundColor: background },
         headerRight: () => <ThemeSwitcher />,
-        contentStyle: { backgroundColor: background },
+        contentStyle: {
+          backgroundColor: background,
+          paddingHorizontal: 20,
+          paddingTop: 15,
+        },
       }}
     />
   );
