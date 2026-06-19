@@ -1,12 +1,15 @@
 import { ThemeSwitcher } from "@/components/Theme-Switcher";
 import "@/global.css";
 import { Stack } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCSSVariable, useUniwind } from "uniwind";
 
 export default function RootLayout() {
+  const insets = useSafeAreaInsets();
   const { theme } = useUniwind();
-  const [background, foreground] = useCSSVariable([
+  const [background, foreground, primary] = useCSSVariable([
     "--color-background",
+    "--color-foreground",
     "--color-primary",
   ]) as Array<string>;
 
@@ -15,13 +18,15 @@ export default function RootLayout() {
       screenOptions={{
         statusBarStyle: theme === "dark" ? "light" : "dark",
         title: "Nawab Notes",
-        headerTintColor: foreground,
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+        headerTintColor: theme === "dark" ? primary : foreground,
         headerStyle: { backgroundColor: background },
         headerRight: () => <ThemeSwitcher />,
         contentStyle: {
           backgroundColor: background,
-          paddingHorizontal: 20,
-          paddingTop: 15,
+          marginBottom: insets.bottom,
         },
       }}
     />

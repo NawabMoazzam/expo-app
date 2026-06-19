@@ -1,5 +1,5 @@
 import Button from "@/components/ui/Button";
-import { ScrollView, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 
 interface Note {
   id: number;
@@ -102,13 +102,15 @@ const notes: Note[] = [
 
 export default function Index() {
   return (
-    <View className="flex-1 relative">
-      <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
-        {notes.map((note) => (
-          <View
-            key={note.id}
-            className="bg-card p-4 mb-4 border border-border dark:border-0 rounded-lg shadow-m dark:shadow-l"
-          >
+    <View className="flex-1 relative px-5 pt-2.5">
+      <FlatList
+        data={notes}
+        keyExtractor={(note) => note.id.toString()}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
+        renderItem={({ item: note }) => (
+          <View className="bg-card p-4 mb-4 border border-border dark:border-0 rounded-lg shadow-m dark:shadow-l">
             <Text className="text-foreground text-lg font-bold">
               {note.title}
             </Text>
@@ -117,15 +119,15 @@ export default function Index() {
               {note.content && note.content.length > 100 ? "..." : ""}
             </Text>
           </View>
-        ))}
-      </ScrollView>
+        )}
+      />
       <Button
         onPress={() => {
           alert("Button Pressed!");
         }}
         iconName="add-sharp"
         size="md"
-        className="absolute py-4 right-2 bottom-6"
+        className="absolute py-4 right-6 bottom-24"
         style={{ elevation: 5 }}
       />
     </View>
