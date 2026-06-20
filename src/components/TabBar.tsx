@@ -1,17 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Pressable, Text, View } from "react-native";
-import { useCSSVariable, useUniwind } from "uniwind";
+import { useCSSVariable } from "uniwind";
 
 export default function TabBar({
   state,
   descriptors,
   navigation,
 }: BottomTabBarProps) {
-  const { theme } = useUniwind();
-  const [primary, primaryForegrond, muted] = useCSSVariable([
+  const [primary, foregrond, muted] = useCSSVariable([
     "--color-primary",
-    "--color-primary-foreground",
+    "--color-foreground",
     "--color-muted-foreground",
   ]) as Array<string>;
   return (
@@ -29,11 +28,7 @@ export default function TabBar({
         if (["_sitemap", "+not-found"].includes(route.name)) return null;
 
         const isFocused = state.index === index;
-        const focusedColor = isFocused
-          ? theme === "dark"
-            ? primary
-            : primaryForegrond
-          : muted;
+        const focusedIconColor = isFocused ? primary : muted;
 
         const onPress = () => {
           const event = navigation.emit({
@@ -60,7 +55,7 @@ export default function TabBar({
           focused: boolean,
         ): keyof typeof Ionicons.glyphMap => {
           if (routeName === "index")
-            return focused ? "clipboard-sharp" : "clipboard-outline";
+            return focused ? "newspaper" : "newspaper-outline";
           if (routeName === "checklist")
             return focused
               ? "checkmark-done-circle"
@@ -79,12 +74,12 @@ export default function TabBar({
           >
             <Ionicons
               name={getIconName(route.name, isFocused)}
-              size={22}
-              color={focusedColor}
+              size={25}
+              color={focusedIconColor}
             />
             <Text
               className="text-xs font-medium"
-              style={[{ color: focusedColor }]}
+              style={{ color: isFocused ? foregrond : muted }}
             >
               {typeof label === "string" ? label : route.name}
             </Text>

@@ -3,7 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   Host,
-  RNHostView,
+  RNHostView
 } from "@expo/ui/jetpack-compose";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
@@ -33,7 +33,7 @@ export const ThemeSwitcher = () => {
           <RNHostView matchContents>
             <Pressable
               onPress={() => setIsExpanded(true)}
-              className="h-8 w-8 flex items-center justify-center"
+              className="h-8 w-8 flex items-center justify-center rounded-lg active:bg-muted"
             >
               <Ionicons
                 name={

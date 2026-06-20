@@ -75,7 +75,7 @@ export default function Button({
       {...props}
       onPress={onPress}
       disabled={disabled || loading}
-      className={`rounded-lg ${variantStyle} ${sizeStyle} ${disabledStyle} ${className || ""}`}
+      className={`rounded-2xl ${variantStyle} ${sizeStyle} ${disabledStyle} ${className || ""}`}
     >
       {loading ? (
         <ActivityIndicator color="white" size="small" />

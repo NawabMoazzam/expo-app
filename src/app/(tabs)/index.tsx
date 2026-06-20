@@ -1,5 +1,6 @@
 import Button from "@/components/ui/Button";
-import { FlatList, Text, View } from "react-native";
+import { router } from "expo-router";
+import { FlatList, Pressable, Text, View, useColorScheme } from "react-native";
 
 interface Note {
   id: number;
@@ -101,16 +102,33 @@ const notes: Note[] = [
 ];
 
 export default function Index() {
+  const colorScheme = useColorScheme();
+  const rippleColor =
+    colorScheme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)";
+
   return (
     <View className="flex-1 relative px-5 pt-2.5">
       <FlatList
         data={notes}
         keyExtractor={(note) => note.id.toString()}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
         renderItem={({ item: note }) => (
-          <View className="bg-card p-4 mb-4 border border-border dark:border-0 rounded-lg shadow-m dark:shadow-l">
+          <Pressable
+            className="bg-card p-4 mb-4 border border-border dark:border-0 rounded-2xl shadow-m dark:shadow-l overflow-hidden"
+            style={{ borderRadius: 16 }}
+            onPress={() => {
+              router.navigate({
+                pathname: "/note-editor",
+                params: { noteID: note.id },
+              });
+            }}
+            android_ripple={{
+              color: rippleColor,
+              borderless: false,
+            }}
+          >
             <Text className="text-foreground text-lg font-bold">
               {note.title}
             </Text>
@@ -118,12 +136,12 @@ export default function Index() {
               {note.content?.slice(0, 100)}
               {note.content && note.content.length > 100 ? "..." : ""}
             </Text>
-          </View>
+          </Pressable>
         )}
       />
       <Button
         onPress={() => {
-          alert("Button Pressed!");
+          router.navigate("/note-editor");
         }}
         iconName="add-sharp"
         size="md"
