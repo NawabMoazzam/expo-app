@@ -5,6 +5,7 @@ import {
   Pressable,
   PressableProps,
   Text,
+  useColorScheme,
   View,
 } from "react-native";
 import { useCSSVariable } from "uniwind";
@@ -23,10 +24,9 @@ interface ButtonProps extends Omit<PressableProps, "children"> {
 }
 
 const variantStyles: Record<Variant, string> = {
-  primary: "bg-primary shadow-l active:bg-primary/80",
-  secondary:
-    "bg-background border border-muted shadow-l active:bg-background/80",
-  outline: "border border-border border-2 bg-secondary active:bg-muted",
+  primary: "bg-primary shadow-l",
+  secondary: "bg-background border border-muted shadow-l",
+  outline: "border border-border border-2 bg-secondary",
   ghost: "active:bg-muted",
   destructive: "bg-destructive/20 border border-destructive",
 };
@@ -69,13 +69,20 @@ export default function Button({
         ? "text-destructive"
         : "text-foreground";
   const disabledStyle = disabled || loading ? "opacity-50" : "";
+  const colorScheme = useColorScheme();
+  const rippleColor =
+    colorScheme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)";
 
   return (
     <Pressable
       {...props}
       onPress={onPress}
       disabled={disabled || loading}
-      className={`rounded-2xl ${variantStyle} ${sizeStyle} ${disabledStyle} ${className || ""}`}
+      className={`rounded-2xl overflow-hidden ${variantStyle} ${sizeStyle} ${disabledStyle} ${className || ""}`}
+      android_ripple={{
+        color: rippleColor,
+        foreground: true,
+      }}
     >
       {loading ? (
         <ActivityIndicator color="white" size="small" />
