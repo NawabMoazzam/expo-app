@@ -1,5 +1,6 @@
 import { ThemeSwitcher } from "@/components/Theme-Switcher";
 import Button from "@/components/ui/Button";
+import { useTabBar } from "@/context/TabBarContext";
 import { deleteNote, getNotes, initDatabase, Note } from "@/lib/database";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
@@ -119,6 +120,7 @@ export default function Index() {
   const colorScheme = useColorScheme();
   const rippleColor =
     colorScheme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)";
+  const { setTabBarStyle } = useTabBar();
 
   const loadNotes = () => {
     const savedNotes = getNotes();
@@ -160,53 +162,56 @@ export default function Index() {
     loadNotes();
   };
 
+  const isSelectionMode = selectedNotes.length > 0;
+
   useEffect(() => {
-    const targetNavigation = navigation.getParent() || navigation;
-    targetNavigation.setOptions({
-      headerTitle:
-        selectedNotes.length > 0
-          ? () => (
-              <View className="items-start">
-                <Text className="text-foreground text-base font-semibold">
-                  {selectedNotes.length} selected
-                </Text>
-              </View>
-            )
-          : "Nawab Notes",
-      headerLeft:
-        selectedNotes.length > 0
-          ? () => (
-              <Pressable onPress={clearSelection} className="mr-2">
-                <Ionicons name="close" size={20} color={foreground} />
-              </Pressable>
-            )
-          : undefined,
-      headerRight:
-        selectedNotes.length > 0
-          ? () => (
-              <View className="flex-row items-center justify-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  title={
-                    selectedNotes.length === notes.length
-                      ? "Clear"
-                      : "Select all"
-                  }
-                  onPress={handleSelectAll}
-                />
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  title="Delete"
-                  iconName="trash"
-                  onPress={handleDeleteSelected}
-                />
-              </View>
-            )
-          : () => <ThemeSwitcher />,
+    const parentNavigation = navigation.getParent() || navigation;
+
+    parentNavigation.setOptions({
+      headerTitle: isSelectionMode
+        ? `${selectedNotes.length} selected`
+        : "Nawab Notes",
+      headerLeft: isSelectionMode
+        ? () => (
+            <Pressable onPress={clearSelection} className="mr-2">
+              <Ionicons name="close" size={20} color={foreground} />
+            </Pressable>
+          )
+        : undefined,
+      headerRight: isSelectionMode
+        ? () => (
+            <View className="flex-row items-center justify-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                title={
+                  selectedNotes.length === notes.length ? "Clear" : "Select all"
+                }
+                onPress={handleSelectAll}
+              />
+              <Button
+                variant="destructive"
+                size="sm"
+                title="Delete"
+                iconName="trash"
+                onPress={handleDeleteSelected}
+              />
+            </View>
+          )
+        : () => <ThemeSwitcher />,
     });
-  }, [navigation, selectedNotes]);
+
+    isSelectionMode ? setTabBarStyle({ display: "none" }) : setTabBarStyle({});
+  }, [
+    navigation,
+    isSelectionMode,
+    selectedNotes,
+    notes,
+    foreground,
+    clearSelection,
+    handleSelectAll,
+    handleDeleteSelected,
+  ]);
 
   const onNotePress = (id: number) => {
     if (selectedNotes.length === 0) {
@@ -236,7 +241,7 @@ export default function Index() {
       <FlatList
         data={notes}
         keyExtractor={(note) => note.id.toString()}
-        contentContainerStyle={{ paddingBottom: 150 }}
+        contentContainerStyle={{ paddingBottom: 80 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -279,15 +284,17 @@ export default function Index() {
           </Pressable>
         )}
       />
-      <Button
-        onPress={() => {
-          router.navigate("/note-editor");
-        }}
-        iconName="add-sharp"
-        size="md"
-        className="absolute py-4 right-6 bottom-28"
-        style={{ elevation: 5 }}
-      />
+      {!isSelectionMode && (
+        <Button
+          onPress={() => {
+            router.navigate("/note-editor");
+          }}
+          iconName="add-sharp"
+          size="md"
+          className="absolute py-4 right-6 bottom-6"
+          style={{ elevation: 5 }}
+        />
+      )}
     </View>
   );
 }

@@ -14,7 +14,7 @@ export default function TabBar({
     "--color-muted-foreground",
   ]) as Array<string>;
   return (
-    <View className="absolute bottom-2 flex-row items-center justify-between mx-2 p-2 bg-background rounded-2xl shadow-l border border-border dark:border-0">
+    <View className="fixed flex-row items-center justify-between m-2 p-2 bg-background rounded-2xl shadow-l border border-border dark:border-0">
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
